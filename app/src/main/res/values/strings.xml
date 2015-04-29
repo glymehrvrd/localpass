@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Localpass</string>
+    <string name="title_activity_main">Localpass</string>
+    <string name="search">搜索</string>
+    <string name="menu_import">导入</string>
+    <string name="menu_clear">清空</string>
+    <string name="menu_exit">退出</string>
+    <string name="title_activity_set_password"></string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
