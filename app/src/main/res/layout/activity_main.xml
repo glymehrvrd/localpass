@@ -28,11 +28,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:inputType="textAutoComplete"
-            android:layout_toLeftOf="@+id/button1"
-            android:layout_toStartOf="@+id/button1" />
+            android:layout_toLeftOf="@+id/btnSearch"
+            android:layout_toStartOf="@+id/btnSearch" />
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btnSearch"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

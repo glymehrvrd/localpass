@@ -14,6 +14,7 @@ public class SetPassword extends Activity {
     private PasswordView pwv;
     private TextView tv;
     private String pwd = "";
+    private long mExitTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class SetPassword extends Activity {
                 } else {
                     // verifying password
                     if (pwv.verifyPassword(password)) {
+                        setResult(RESULT_OK);
                         finish();
                     } else {
                         Toast.makeText(SetPassword.this, "密码不正确，请重新绘制！", Toast.LENGTH_LONG).show();
@@ -86,6 +88,13 @@ public class SetPassword extends Activity {
 
     @Override
     public void onBackPressed() {
-        // Do Here what ever you want do on back press;
+        if(System.currentTimeMillis()-mExitTime>2000) {
+            Toast.makeText(this, "再按一次返回键退出程序", Toast.LENGTH_SHORT).show();
+            mExitTime= System.currentTimeMillis();
+        }
+        else{
+            setResult(RESULT_CANCELED);
+            finish();
+        }
     }
 }

@@ -34,24 +34,10 @@ import java.util.ArrayList;
  */
 public class MainActivity extends Activity {
 
-    // @Override
-    // public boolean onKeyDown(int keyCode, KeyEvent event) {
-    // if(keyCode == KeyEvent.KEYCODE_BACK){
-    // Field field = null;
-    // try {
-    // field = popupdialog.getClass()
-    // .getSuperclass()
-    // .getDeclaredField("mShowing");
-    // field.setAccessible(true);
-    // field.set(popupdialog, true);
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
-    // return super.onKeyDown(keyCode, event);
-    // }
+    public final int REQUEST_PW = 1;
+    public final int REQUEST_GETFILE = 2;
 
-    private Button button1;
+    private Button btnSearch;
     private EditText editText1;
     private ListView listView1;
 
@@ -59,16 +45,7 @@ public class MainActivity extends Activity {
     private SimpleCursorAdapter adapter;
     private DBManager dbmngr;
 
-    // private DialogInterface popupdialog = null;
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Intent intent = new Intent(MainActivity.this,
-                SetPassword.class);
-        startActivity(intent);
-
+    private void init() {
         // 初始化database manager
         dbmngr = new DBManager(this);
         listView1 = (ListView) findViewById(R.id.listView1);
@@ -80,6 +57,7 @@ public class MainActivity extends Activity {
                 new String[]{"url"}, new int[]{R.id.listview_textView1},
                 0);
         listView1.setAdapter(adapter);
+
         // 点击时弹出窗口
         listView1.setOnItemClickListener(new OnItemClickListener() {
 
@@ -156,8 +134,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        button1 = (Button) findViewById(R.id.button1);
-        button1.setOnClickListener(new OnClickListener() {
+        btnSearch = (Button) findViewById(R.id.btnSearch);
+        btnSearch.setOnClickListener(new OnClickListener() {
 
             public void onClick(View v) {
                 String keyword = editText1.getText().toString();
@@ -176,29 +154,51 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // 手势密码
+        Intent intent = new Intent(MainActivity.this,
+                SetPassword.class);
+        startActivityForResult(intent, REQUEST_PW);
+    }
+
+    @Override
     protected void onDestroy() {
         if (cur != null)
             cur.close();
         if (dbmngr != null)
             dbmngr.closeDB();
-        super.onStop();
+        super.onDestroy();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // 返回选择的网站信息文件
-        if (resultCode == RESULT_OK) {
-            clearDatabase();
-            Uri uri = data.getData();
-            importToDatabase(uri);
+        switch (requestCode) {
+            case REQUEST_PW:
+                if (resultCode == RESULT_OK) {
+                    init();
+                } else {
+                    finish();
+                }
+                break;
+            case REQUEST_GETFILE:
+                // 返回选择的网站信息文件
+                if (resultCode == RESULT_OK) {
+                    clearDatabase();
+                    Uri uri = data.getData();
+                    importToDatabase(uri);
 
-            // 更改数据指针
-            Cursor newcur = dbmngr.getAll();
-            adapter.changeCursor(newcur);
-            cur.close();
-            cur = newcur;
-            super.onActivityResult(requestCode, resultCode, data);
+                    // 更改数据指针
+                    Cursor newcur = dbmngr.getAll();
+                    adapter.changeCursor(newcur);
+                    cur.close();
+                    cur = newcur;
+                }
+                break;
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -215,9 +215,9 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent();
             /* 限定可选文件类型 */
                 intent.setType("text/comma-separated-values");
-			/* 使用Intent.ACTION_GET_CONTENT这个Action */
+            /* 使用Intent.ACTION_GET_CONTENT这个Action */
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, REQUEST_GETFILE);
                 break;
             case R.id.menu_clear:
                 clearDatabase();
